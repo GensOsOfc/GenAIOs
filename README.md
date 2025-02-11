@@ -1,0 +1,2 @@
+# GenAIOs
+Proyect IA
