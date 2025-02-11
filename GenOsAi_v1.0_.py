@@ -5,11 +5,11 @@ import json
 import os
 from difflib import get_close_matches
 
-# Configuración
+
 DB_NAME = 'conversaciones.db'
 CONOCIMIENTOS_FILE = 'conocimientos.json'
 
-# Funciones principales
+
 def cargar_conocimientos():
     def encontrar_archivo_insensible():
         nombre_base = CONOCIMIENTOS_FILE.lower()
@@ -25,7 +25,6 @@ def cargar_conocimientos():
         try:
             with open(archivo_real, 'r', encoding='utf-8') as f:
                 datos = json.load(f)
-                # Normalizar las claves al cargar
                 for key, value in datos.items():
                     clave_normalizada = normalizar_texto(key)
                     conocimientos[clave_normalizada] = value
@@ -58,31 +57,29 @@ def es_etico(lower_entrada):
     return not any(palabra in lower_entrada for palabra in palabras_prohibidas)
 
 def normalizar_texto(texto):
-    # Eliminar signos de puntuación y convertir a minúsculas
+   
     texto = re.sub(r'[^\w\s]', '', texto.lower())
-    # Eliminar espacios adicionales
     return re.sub(r'\s+', ' ', texto).strip()
 
 def buscar_coincidencias_conocimiento(entrada, conocimientos):
     entrada_normalizada = normalizar_texto(entrada)
     
-    # 1. Búsqueda exacta
     if entrada_normalizada in conocimientos:
         return conocimientos[entrada_normalizada]
     
-    # 2. Búsqueda por coincidencia parcial
+
     for clave, valor in conocimientos.items():
         if clave in entrada_normalizada:
             return valor
     
-    # 3. Coincidencia aproximada con todo el contexto
+
     claves = list(conocimientos.keys())
     coincidencias = get_close_matches(entrada_normalizada, claves, n=1, cutoff=0.7)
     
     if coincidencias:
         return conocimientos[coincidencias[0]]
     
-    # 4. Búsqueda por palabras clave importantes
+   
     palabras_entrada = entrada_normalizada.split()
     for clave in claves:
         palabras_clave = clave.split()
@@ -96,7 +93,7 @@ def procesar_entrada(entrada):
     if not es_etico(lower_entrada):
         return "Lo siento, no puedo ayudar con eso por razones éticas."
     
-    # Operaciones matemáticas
+   
     tokens = set(lower_entrada.split())
     numeros = extraer_numeros(entrada)
     
@@ -117,7 +114,7 @@ def procesar_entrada(entrada):
             else:
                 return f"Proporciona exactamente {req} números para esta operación."
     
-    # Búsqueda en conocimientos
+   
     respuesta_conocimiento = buscar_coincidencias_conocimiento(entrada, conocimientos)
     if respuesta_conocimiento:
         return respuesta_conocimiento
